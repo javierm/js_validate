@@ -31,7 +31,7 @@ class ValidationHelper extends Helper {
   function bind($modelNames, $options=array()) {
     $defaultOptions = array('form' => 'form', 'inline' => true, 'messageId' => null);
     $options = am($defaultOptions, $options);
-    $pluginOptions = array_intersect_key($options, array('messageId' => true));
+    $pluginOptions = array_intersect_key($options, array('messageId' => true, 'message' => null));
 
     //load the whitelist
     $this->whitelist = Configure::read('javascriptValidationWhitelist');

@@ -43,7 +43,10 @@
             }
             
             if (!$.fn.validate.validateRule(val, this['rule'], this['negate'])) {
-              errors.push(this['message']);
+              errors.push({
+                message: this['message'],
+                id: $("#" + field).attr("id")
+              });
               
               $.fn.validate.setError(field, this['message']);
               
@@ -52,11 +55,10 @@
               }  
             }
           });
-        });
-      
-        $.fn.validate.afterFilter(errors);
+        });       
 
         if(errors.length > 0) {
+          $.fn.validate.afterFilter(errors);
           return false;
         }
         
@@ -172,10 +174,29 @@
     $("div").removeClass("error")
   };  
 
-  $.fn.validate.afterFilter = function(errors) {
+   $.fn.validate.afterFilter = function(errors) {
     if(options.messageId != null) {
-      $("#" + options.messageId).html(errors.join("<br />"))
-                                .slideDown();
+      var $list = $('<ol></ol>');
+      $.each(errors, function( i, error) {
+         var $element= $('<li></li>');
+         var $link = $('<a href="#' + error.id + '">' + error.message + '</a>')
+            .click( function() {
+                $('#' + error.id).focus();
+                return false;
+            })
+            .appendTo($element);
+
+         $list.append($element);
+      });
+
+      var $content = $('<div class="errors"></div>').html($list);
+      if(options.message != null) {
+        $content.prepend('<p><a href="#">' + options.message.replace( '%s', errors.length ) +
+                         '</a></p>');
+      }
+
+      $("#" + options.messageId).html($content).slideDown();
+      $("#" + options.messageId + ' a:first').focus();
     }
   };
 })(jQuery);
